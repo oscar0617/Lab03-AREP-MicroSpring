@@ -1,0 +1,120 @@
+.titulo{
+    text-align: center;
+    font-family: "Montserrat", serif;
+    font-style: bold;
+    font-weight: 800;
+}
+
+body{
+    display: flex;
+    flex-direction: column;
+    background-color: #88a6eb;
+    justify-content: center;
+}
+
+.imagenGit {
+    width: 50%;
+    height: 50%;
+    display: block;
+    border: black;
+    border-style: solid;
+    border-width: 2px;
+    border-radius: 20px;
+    box-shadow: 10px 10px 80px 0 rgba(62, 64, 64, 0.4);
+}
+
+.get{
+    text-align: center;
+    font-family: "Montserrat", serif;
+    font-style: bold;
+    font-weight: 500;
+}
+
+.post{
+    text-align: center;
+    font-family: "Montserrat", serif;
+    font-style: bold;
+    font-weight: 500;
+}
+
+.mainContainer{
+    align-self: center;
+    width: 60%;
+    padding: 40px 40px;
+    background-color: #afc5f9;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 30px;
+    gap:30px;
+}
+
+.getContainer{
+    padding: 0px 30px;
+    padding-bottom: 30px;
+    background-color: #d0deff;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 20px;
+    box-shadow: 10px 10px 80px 0 rgba(62, 64, 64, 0.4);
+    gap:10px;
+}
+
+.postContainer{
+    padding: 0px 30px;
+    padding-bottom: 30px;
+    background-color: #d0deff;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 20px;
+    box-shadow: 10px 10px 80px 0 rgba(62, 64, 64, 0.4);
+    gap:10px;
+}
+
+.label{
+    padding: 100px 0px;
+    font-family: "Montserrat", serif;
+    font-size: 16px;
+}
+
+.inputInfo{
+    width: 100%;
+    padding: 10px 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-sizing: border-box;
+}
+
+.boton {
+    background-color: #4e8cf6b3;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    font-size: 12px;
+    cursor: pointer;
+    border-radius: 20px;
+    margin: auto; 
+    display: block; 
+}
+
+.responseJSON{
+    display: flex;
+    align-items: center;
+    font-family: "Montserrat", serif;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+@media (min-width: 768px) {
+    .mainContainer {
+        display: flex;
+        flex-direction: row;
+        gap: 30px;
+    }
+}

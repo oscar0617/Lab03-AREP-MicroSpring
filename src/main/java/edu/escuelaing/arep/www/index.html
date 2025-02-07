@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es" xml:lang="es">
+
+<head>
+    <title>Aplicaciones Distribuidas</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <h1 class="titulo">Aplicaciones Distribuidas</h1>
+    <div class="mainContainer">
+        <div class="getContainer">
+            <h1 class="get">Form with GET</h1>
+            <img src="https://github.com/oscar0617.png" alt="imagenGit" class="imagenGit">
+            <form action="/hello">
+                <label class="label" for="name">Name:</label><br>
+                <input class="inputInfo" type="text" id="name" name="name"><br><br>
+                <input class="boton" type="button" value="Submit" onclick="loadGetMsg()">
+            </form>
+            <div class="responseJSON" id="getrespmsg"></div>
+        </div>
+        <div class="postContainer">
+            <h1 class="post">Form with POST</h1>
+            <img src="https://github.com/oscar0617.png" alt="imagenGit" class="imagenGit">
+            <form action="/hellopost">
+                <label class="label" for="postname">Name:</label><br>
+                <input class="inputInfo" type="text" id="postname" name="name"><br><br>
+                <input class="boton" type="button" value="Submit" onclick="loadPostMsg(postname)">
+            </form>
+            <div class="responseJSON" id="postrespmsg"></div>
+        </div>
+        <script src="script.js"></script>
+    </div>
+</body>
+
+</html>
