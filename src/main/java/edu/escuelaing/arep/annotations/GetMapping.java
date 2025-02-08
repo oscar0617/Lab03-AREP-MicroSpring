@@ -1,4 +1,4 @@
-package edu.escuelaing.arep.server;
+package edu.escuelaing.arep.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

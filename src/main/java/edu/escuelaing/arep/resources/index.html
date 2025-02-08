@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es" xml:lang="es">
+
+<head>
+    <title>MiniSpring</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <h1 class="titulo">MiniSpring</h1>
+    <div class="mainContainer">
+
+        <div class="getContainer">
+            <h1 class="get">Greeting with GET</h1>
+            <img src="https://github.com/oscar0617.png" alt="imagenGit" class="imagenGit">
+            <form action="/greeting">
+                <label class="label" for="name">Name:</label><br>
+                <input class="inputInfo" type="text" id="name" name="name"><br><br>
+                <input class="boton" type="button" value="Submit" onclick="loadGetMsg()">
+            </form>
+            <div class="responseJSON" id="getrespmsg"></div>
+        </div>
+
+        <div class="piContainer">
+            <h1 class="post">Get PI</h1>
+            <img src="https://github.com/oscar0617.png" alt="imagenGit" class="imagenGit">
+            <form action="/pi">
+                <input class="boton" type="button" value="Get PI" onclick="getPiFromRest()">
+            </form>
+            <div class="responseJSON" id="getPiRest"></div>
+        </div>
+
+        <div class="eulerContainer">
+            <h1 class="post">Get Euler</h1>
+            <img src="https://github.com/oscar0617.png" alt="imagenGit" class="imagenGit">
+            <form action="/e">
+                <input class="boton" type="button" value="Get Euler" onclick="getEulerFromRest()">
+            </form>
+            <div class="responseJSON" id="getEulerRest"></div>
+        </div>
+
+        <div class="multiplicationContainer">
+            <h1 class="post">Basic Multiplication</h1>
+            <img src="https://github.com/oscar0617.png" alt="imagenGit" class="imagenGit">
+            <form action="/multiplicacion">
+                <label class="label" for="name">Valor 1:</label><br>
+                <input class="inputInfo" type="text" id="valor1" name="name"><br><br>
+                <label class="label" for="name">Valor 2:</label><br>
+                <input class="inputInfo" type="text" id="valor2" name="name"><br><br>
+                <input class="boton" type="button" value="Multiply" onclick="getMultiplication()">
+            </form>
+            <div class="responseJSON" id="getMultiplication"></div>
+        </div>
+
+        <div class="restaContainer">
+            <h1 class="post">Basic Substraction</h1>
+            <img src="https://github.com/oscar0617.png" alt="imagenGit" class="imagenGit">
+            <form action="/resta">
+                <label class="label" for="name">Valor 1:</label><br>
+                <input class="inputInfo" type="text" id="valor1resta" name="name"><br><br>
+                <label class="label" for="name">Valor 2:</label><br>
+                <input class="inputInfo" type="text" id="valor2resta" name="name"><br><br>
+                <input class="boton" type="button" value="Substract" onclick="getSubstraction()">
+            </form>
+            <div class="responseJSON" id="getSubstraction"></div>
+        </div>
+
+        <div class="sumaContainer">
+            <h1 class="post">Basic Addition</h1>
+            <img src="https://github.com/oscar0617.png" alt="imagenGit" class="imagenGit">
+            <form action="/suma">
+                <label class="label" for="name">Valor 1:</label><br>
+                <input class="inputInfo" type="text" id="valor1suma" name="name"><br><br>
+                <label class="label" for="name">Valor 2:</label><br>
+                <input class="inputInfo" type="text" id="valor2suma" name="name"><br><br>
+                <input class="boton" type="button" value="Add" onclick="getSuma()">
+            </form>
+            <div class="responseJSON" id="getAddition"></div>
+        </div>
+
+        <script src="script.js"></script>
+    </div>
+</body>
+
+</html>

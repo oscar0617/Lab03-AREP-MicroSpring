@@ -1,6 +1,7 @@
-# Distributed Applications
+# MiniSpring
 
-This project is a simple HTTP server implementation in Java that processes GET and POST requests without using frameworks like Spring Boot. The server is designed to handle basic RESTful endpoints and serve static files, such as HTML, CSS, and JavaScript, from a designated directory.
+In this project we will review a lightweight web server  without using Spring Boot. It processes custom annotations to expose RESTful web services dynamically. The main goal of this project is to build a micro-framework, allowing developers to define controllers, endpoints, and request parameters using Java annotations.
+
 
 ![Demo](images/demo.gif)
 
@@ -46,9 +47,9 @@ You need to install the following tools to run the project:
 
 1. Clone this repository and go to project directory:
     ```
-    git clone https://github.com/oscar0617/Lab01-AREP-AplicacionesDistribuidas
+    git clone https://github.com/oscar0617/Lab03-AREP-MicroSpring
 
-    cd Lab01-AREP-AplicacionesDistribuidas
+    cd Lab03-AREP-MicroSpring
     ```
 2. Build the project:
     ```
@@ -56,20 +57,26 @@ You need to install the following tools to run the project:
     ```
     Should appear something like this:
     ```
-    [INFO] Building jar: C:\Users\luzma\Desktop\AREP\Lab01-AREP-AplicacionesDistribuidas\target\Lab01-AREP-AplicacionesDistribuidas-1.0-SNAPSHOT.jar
+    [INFO] Building jar: C:\Users\luzma\Desktop\AREP\Lab03-AREP-MicroSpring\target\Lab03-AREP-MicroSpring-1.0-SNAPSHOT.jar
     [INFO] ------------------------------------------------------------------------
     [INFO] BUILD SUCCESS
     [INFO] ------------------------------------------------------------------------
     ```
 3. Run the project:
     ```
-    java -cp target/Lab01-AREP-AplicacionesDistribuidas-1.0-SNAPSHOT.jar edu.escuelaing.arep.HttpServer
+    java -cp target/Lab03-AREP-MicroSpring-1.0-SNAPSHOT.jar edu.escuelaing.arep.MicroServer
     ```
     Should appear something like this:
     ```
+    Cargue el servicio: /greeting
+    Cargue el servicio: /pi
+    Cargue el servicio: /e
+    Cargue el servicio: /resta
+    Cargue el servicio: /multiplicacion
+    Cargue el servicio: /suma
     Listo para recibir ...
     ```
-Now you are able to access into the ```index.html```.
+Now you are able to access into the ```index.html```. Using the following URL: ```http://localhost:8080/index.html```
 
 ## Architecture
 
@@ -77,116 +84,175 @@ Now you are able to access into the ```index.html```.
 
 #### Overview
 
-This architecture diagram provides an overview of the interactions between the **user**, **browser**, and the **server** in the lightweight HTTP server implementation. It highlights the key components and their relationships to demonstrate how HTTP requests are processed and responses are delivered.
+This architecture diagram illustrates the request flow in the **MicroSpring Server** system. It consists of three main components:
 
+1. **Browser (Client)**
+2. **MicroServer (Backend Server)**
+3. **Services (RESTful API Controllers)**
 
-#### **User**
-- Represents the end user who interacts with the system by sending HTTP requests via a web browser.
-- Example: Typing a URL or clicking a button in the web application.
+##### Components and Workflow
 
-#### **Browser**
-- The browser acts as the client that sends HTTP requests to the server and processes the responses.
+##### **1. Browser (Client)**
+The user interacts with the system through a web browser, which:
+- Sends HTTP requests to the server on port **8080**.
+- Requests **static files** such as:
+  - **HTML** (for page structure).
+  - **JavaScript** (for dynamic behavior).
+  - **CSS** (for styling).
 
-##### Components:
-1. **HTML**:
-   - Provides the structure of the webpage, including forms for GET and POST requests.
-   - Example: A form where the user can enter a name to send a request to the server.
-   
-2. **CSS**:
-   - Styles the HTML content to make the webpage visually appealing.
-   
-3. **JavaScript**:
-   - Sends asynchronous HTTP requests (via `XMLHttpRequest` or `fetch`) to the server.
-   - Processes responses to dynamically update the webpage without requiring a full page reload.
+##### **2. MicroServer (Backend Server)**
+The `MicroServer` is the core of the system and is responsible for:
+- Handling **static file requests** from the browser.
+- Serving **RESTful API requests** by routing them to the appropriate service.
+- Processing requests dynamically using custom annotations.
 
-#### **Server**
-The server receives and processes HTTP requests from the browser, running on **port 35000**.
+##### **3. Services (RESTful API Controllers)**
+The `MicroServer` delegates RESTful requests to controllers inside the **Services** module, which contains:
+- **MathController**
+  - Handles mathematical operations such as addition, subtraction, multiplication, and retrieving constants like **pi** and **e**.
+- **GreetingController**
+  - Processes requests related to greeting messages.
 
-##### Components:
-1. **HttpServer**:
-   - The main component of the server.
-   - Listens for HTTP requests on port 35000.
-   - Routes requests to the appropriate handler (static file handler or REST service).
+##### Request Flow
 
-2. **HelloRestService**:
-   - A RESTful service that processes dynamic requests to the `/app/hello` endpoint.
-   - Takes parameters from the query string (e.g., `?name=John`) and returns a JSON response.
-   - Example Response: `{ "name": "John" }`.
+1. The user sends an HTTP request to **port 8080** from the browser.
+2. If the request is for a **static file** (HTML, JavaScript, CSS), the **MicroServer** responds with the requested file.
+3. If the request is for a **RESTful API endpoint**, the **MicroServer** forwards it to the appropriate controller in the **Services** module.
+4. The controller processes the request and returns the corresponding response.
+5. The **MicroServer** sends the response back to the browser.
 
-##### Key Interactions:
-1. **Static Requests**:
-   - Requests for static files like HTML, CSS, and JavaScript are served by the `HttpServer` by locating the files in the `static` directory.
-   - The browser uses these files to render the webpage.
-
-2. **Dynamic Requests**:
-   - When the user interacts with the form (e.g., submitting a name), the browser sends an HTTP GET or POST request to the `/app/hello` endpoint.
-   - The `HelloRestService` processes the request and returns a dynamic JSON response.
 
 ## Class Diagram
 ![Class Diagram](images/ClassDiagram.png)
 
 #### Overview
-The diagram represents the structure and methods of the `HttpServer` class, which serves as the core component of the HTTP server implementation in this project. Here’s a detailed breakdown of its elements:
 
-#### **Class: `HttpServer`**
-This class is responsible for managing the entire lifecycle of the HTTP server, including receiving requests, processing them, and sending responses back to clients.
+The class diagram represents the **MicroSpring Server**, showing its key components, relationships, and responsibilities. The system is structured into three main packages:
 
-#### **Methods**:
-1. **`+ startServer(port: int): void`**
-   - **Description**: This method initializes the server on the specified port and starts listening for incoming connections.
-   - **Purpose**: It is the entry point for the server, setting up the `ServerSocket` and managing the main request-handling loop.
+1. **`annotations`** - Defines custom annotations to handle RESTful requests.
+2. **`services`** - Implements controllers that process HTTP requests.
+3. **`MicroServer`** - The core server responsible for managing HTTP requests and invoking annotated methods.
 
-2. **`+ helloRestService(path: String, query: String): String`**
-   - **Description**: Processes requests to the `/app/hello` RESTful endpoint. It generates a JSON response using the query parameter passed in the request.
-   - **Purpose**: Implements the server's REST functionality by dynamically constructing and returning a personalized message.
+###### **Annotations Package**
+This package contains custom annotations used for defining RESTful endpoints:
 
-3. **`+ serveFile(out: PrintWriter, filePath: String): void`**
-   - **Description**: Reads a file from the server's file system and sends it to the client. It also determines whether the file exists and handles errors (e.g., returning a 404 error for missing files).
-   - **Purpose**: Facilitates static file serving, enabling the server to deliver resources such as HTML, CSS, and JavaScript.
+- **`@GetMapping`**
+  - Defines a mapping between a URL path and a method.
+  - Has a `value()` attribute that specifies the endpoint URL.
 
-4. **`+ getContentType(filePath: String): String`**
-   - **Description**: Determines the MIME type of a file based on its extension (e.g., `.html`, `.css`, `.js`, etc.).
-   - **Purpose**: Ensures the server sends the correct `Content-Type` header in HTTP responses, which is essential for browsers to interpret files properly.
+- **`@RequestParam`**
+  - Defines query parameters in HTTP requests.
+  - Attributes:
+    - `value()`: The name of the query parameter.
+    - `defaultValue()`: A default value if the parameter is not provided.
+
+- **`@RestController`**
+  - Marks a class as a REST controller, allowing it to handle HTTP requests.
+
+
+###### **Services Package**
+This package contains controllers that process HTTP requests and return responses:
+
+###### **MathController**
+Handles mathematical operations:
+
+- **`euler(nousada: String) : String`**
+  - Returns Euler's constant (`2.718281828459045`).
+
+- **`pi(name: String) : String`**
+  - Returns the value of π (`3.141592653589793`).
+
+- **`multiplicacion(valor1: Double, valor2: Double) : String`**
+  - Multiplies two numbers and returns the result.
+
+- **`resta(valor1: Double, valor2: Double) : String`**
+  - Subtracts `valor2` from `valor1` and returns the result.
+
+- **`suma(valor1: Double, valor2: Double) : String`**
+  - Adds `valor1` and `valor2` and returns the result.
+
+###### **GreetingController**
+Handles a simple greeting message:
+
+- **`greeting(name: String) : String`**
+  - Returns a greeting message based on the provided `name`.
+
+###### **MicroServer Class**
+The `MicroServer` class is the **core** of the application, responsible for:
+
+- Managing the server lifecycle.
+- Handling incoming HTTP requests.
+- Loading components dynamically using reflection.
+
+###### **Attributes**
+- **`port : int = 8080`** → The server runs on port `8080`.
+- **`resourcesPath : String = "src/main/java/edu/escuelaing/arep/resources"`** → Directory for serving static files.
+- **`running : Boolean = true`** → Indicates whether the server is running.
+
+###### **Methods**
+- **`main(args: String[]) : void`**
+  - Starts the server and listens for client connections.
+
+- **`loadComponents(args: String[]) : void`**
+  - Dynamically loads annotated service components from a specified package.
+
+- **`loadComponents() : void`**
+  - Alternative method to load services without arguments.
+
+- **`stopServer() : void`**
+  - Stops the server execution.
+
+- **`simulateRequests(route: String) : String`**
+  - Simulates a request to an endpoint by invoking the corresponding method.
+
+###### **Relationships and Interactions**
+- **Annotations → Services**
+  - The `@RestController`, `@GetMapping`, and `@RequestParam` annotations define how services handle requests.
+  
+- **MicroServer → Services**
+  - The server dynamically detects and registers services marked with `@RestController`.
+
+- **MicroServer → Annotations**
+  - Uses reflection to scan for `@GetMapping` and `@RequestParam` annotations, mapping URLs to methods.
 
 
 ## Running the tests
 
-The following unit tests were created to validate the functionality of the `HttpServer` class. These tests ensure that each component of the server behaves as expected.
+The following unit tests were created to validate the functionality of the `MicroServer` class. These tests ensure that each component of the server behaves as expected.
 
-#### **1. `testHelloRestService`**
-- **Purpose**: Validates that the `helloRestService` method correctly generates a JSON response for the `/app/hello` endpoint.
+#### **1. `testGreetingEndpoint`**
+- **Purpose**: Validates that the `/greeting` endpoint returns the expected response.
 - **What it tests**:
-  - When the query parameter `name=John` is provided, the method returns a properly formatted HTTP response with a JSON payload: `{"name": "John"}`.
+  - When requested, it should return `"Hola Mundo"`.
+  - Expected HTTP response: `200 OK` with body `"Hola Mundo"`.
 
-#### **2. `testGetContentTypeHtml`**
-- **Purpose**: Ensures that the `getContentType` method returns the correct MIME type for `.html` files.
+#### **2. `testEulerEndpoint`**
+- **Purpose**: Ensures that the `/e` endpoint correctly returns Euler’s constant.
 - **What it tests**:
-  - Verifies that `getContentType("index.html")` returns `"text/html"`.
+  - Returns `"2.718281828459045"` as expected.
 
-#### **3. `testGetContentTypeCss`**
-- **Purpose**: Validates that the `getContentType` method recognizes `.css` files and returns the correct MIME type.
+#### **3. `testPiEndpoint`**
+- **Purpose**: Ensures that the `/pi` endpoint returns the value of pi.
 - **What it tests**:
-  - Checks if `getContentType("styles.css")` returns `"text/css"`.
+  - Returns `"3.141592653589793"` as expected.
 
-#### **4. `testGetContentTypeJs`**
-- **Purpose**: Ensures that the `getContentType` method correctly identifies `.js` files and returns the MIME type for JavaScript.
+#### **4. `testMultiplicacionEndpoint`**
+- **Purpose**: Validates that the multiplication operation works as expected.
 - **What it tests**:
-  - Confirms that `getContentType("script.js")` returns `"application/javascript"`.
+  - Request: `/multiplicacion?valor1=2&valor2=3`
+  - Expected response: `"6.0"`.
 
-#### **5. `testGetContentTypeUnknown`**
-- **Purpose**: Verifies that the `getContentType` method falls back to `"text/plain"` for unknown file extensions.
+#### **5. `testRestaEndpoint`**
+- **Purpose**: Ensures that the substraction operation returns the correct value.
 - **What it tests**:
-  - Ensures that `getContentType("file.unknown")` returns `"text/plain"`.
+  - Request: `/resta?valor1=5&valor2=3`
+  - Expected response: `"2.0"`.
 
-#### **6. `testServeFileNotFound`**
-- **Purpose**: Simulates serving a non-existent file and validates the server's error-handling functionality.
+#### **6. `testSumaEndpoint`**
+- **Purpose**: Ensures that the addition operation returns the correct value.
 - **What it tests**:
-  - Ensures that when a file does not exist, the server returns a `404 Not Found` response with an appropriate error message.
-  - Example Response:
-    ```
-    HTTP/1.1 404 Not Found
-    <h1>404 File Not Found</h1>
-    ```
+  - Request: `/suma?valor1=4&valor2=6`
+  - Expected response: `"10.0"`.
 
 ![Test cases](images/test.png)
 
@@ -216,7 +282,7 @@ I use [GitHub](http://git-scm.com) for versioning.
 
 * **Oscar Santiago Lesmes Parra** - [oscar0617](https://github.com/oscar0617)
 
-Date: 27/01/2025
+Date: 07/02/2025
 ## License
 
 This project is licensed under the GNU.
