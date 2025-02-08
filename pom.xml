@@ -27,7 +27,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>edu.escuelaing.arep.MicroSpring</mainClass>
+              <mainClass>edu.escuelaing.arep.MicroServer</mainClass>
             </manifest>
           </archive>
         </configuration>
@@ -39,7 +39,7 @@
         <artifactId>exec-maven-plugin</artifactId>
         <version>3.2.0</version>
         <configuration>
-          <mainClass>edu.escuelaing.arep.MicroSpring</mainClass>
+          <mainClass>edu.escuelaing.arep.MicroServer</mainClass>
         </configuration>
       </plugin>
     </plugins>
