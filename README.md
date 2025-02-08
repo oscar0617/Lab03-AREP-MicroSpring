@@ -258,14 +258,16 @@ The following unit tests were created to validate the functionality of the `Micr
 
 ## Conclusion
 
-This project demonstrates the foundational concepts of building a lightweight HTTP server in Java, emphasizing low-level control over HTTP request handling without relying on frameworks like Spring Boot. Through the implementation of the `HttpServer`, we explored the following key aspects:
+The **MicroSpring Server** project successfully demonstrates the implementation of a lightweight, annotation-based web framework built from scratch in Java. By leveraging Java reflection and custom annotations, the server dynamically registers and processes RESTful endpoints, similar to traditional frameworks like Spring Boot but without external dependencies.
 
-1. **Static and Dynamic Content Handling**: The server successfully serves static files (HTML, CSS, JavaScript) from a designated directory and processes dynamic RESTful requests to generate JSON responses.
-2. **Custom HTTP Routing**: The `HttpServer` employs a routing mechanism to direct requests to appropriate handlers, showcasing a clear separation of responsibilities between static file serving and REST API logic.
-3. **Error Handling**: The project includes basic error handling, such as returning a `404 Not Found` response for invalid file paths, ensuring reliability and better user experience.
-4. **Test-Driven Development**: The project employs unit tests to validate key functionalities like content type detection, REST API response generation, and file handling, ensuring correctness and robustness.
+## Key Achievements
 
-This implementation serves as an excellent introduction to understanding the inner workings of HTTP servers, making it a valuable educational tool. While the project is simple in scope, it provides a strong foundation for expanding into more complex server architectures or integrating additional features, such as database connectivity or middleware layers.
+- **Custom Annotations:** The project defines and utilizes `@RestController`, `@GetMapping`, and `@RequestParam` annotations to handle HTTP requests dynamically.
+- **Minimalistic Web Server:** The `MicroServer` component serves both static files (HTML, CSS, JavaScript) and API requests on port 8080.
+- **Modular Service Structure:** Controllers like `MathController` and `GreetingController` handle various API functionalities, ensuring clear separation of concerns.
+- **Unit Testing with JUnit:** The project includes comprehensive unit tests to validate endpoint responses, static file handling, and content type detection.
+- **Concurrency Support:** The server manages multiple simultaneous requests using a thread pool.
+
 
 
 ## Built With
