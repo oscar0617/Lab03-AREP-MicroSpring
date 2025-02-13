@@ -1,16 +1,14 @@
 package edu.escuelaing.arep;
 
+import edu.escuelaing.arep.annotations.GetMapping;
+import edu.escuelaing.arep.annotations.RequestParam;
+import edu.escuelaing.arep.annotations.RestController;
+
 import java.io.*;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.*;
-import java.util.Arrays;
-import edu.escuelaing.arep.annotations.GetMapping;
-import edu.escuelaing.arep.annotations.RequestParam;
-import edu.escuelaing.arep.annotations.RestController;
+import java.util.*;
 
 public class MicroServer {
 
@@ -21,15 +19,8 @@ public class MicroServer {
 
     public static void main(String[] args) throws Exception {
         loadComponents();
-        ExecutorService threadPool = Executors.newFixedThreadPool(2);
-        ServerSocket serverSocket = new ServerSocket(port);
         System.out.println("Listo para recibir ... ");
-        while (running) {
-            Socket clientSocket = serverSocket.accept();
-            threadPool.submit(new ClientHandler(clientSocket));
-        }
-        serverSocket.close();
-        threadPool.shutdown();
+        new HttpServer().start();
     }
 
     /**
@@ -60,11 +51,11 @@ public class MicroServer {
     /**
      * Loads the services reading the annotations from the services classes
      */
-    public static void loadComponents(){
+    public static void loadComponents() {
         try {
             File filePath = new File("src/main/java/edu/escuelaing/arep/services");
-            for(File file:filePath.listFiles()){
-                if(file.getName().endsWith(".java")){
+            for (File file : filePath.listFiles()) {
+                if (file.getName().endsWith(".java")) {
                     String className = "edu.escuelaing.arep.services." + file.getName().replace(".java", "");
                     Class<?> serviceClass = Class.forName(className);
                     if (serviceClass.isAnnotationPresent(RestController.class)) {
@@ -100,78 +91,73 @@ public class MicroServer {
 /**
  * Starts the web server and handles the client requests
  */
-class ClientHandler implements Runnable {
-    private Socket clientSocket;
+class HttpServer {
 
-    public ClientHandler(Socket socket) {
-        this.clientSocket = socket;
-    }
+    private static final String staticFilePath = "src/main/java/edu/escuelaing/arep/resources";
 
-    @Override
-    public void run() {
-        try (BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-             BufferedOutputStream dataOut = new BufferedOutputStream(clientSocket.getOutputStream())) {
+    public void start() throws IOException {
+        ServerSocket serverSocket = new ServerSocket(8080);
 
-            String requestLine = in.readLine();
-            if (requestLine == null) return;
+        while (true) {
+            try (Socket clientSocket = serverSocket.accept();
+                 BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                 PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+                 BufferedOutputStream dataOut = new BufferedOutputStream(clientSocket.getOutputStream())) {
 
-            String[] tokens = requestLine.split(" ");
-            String method = tokens[0];
-            String fileRequested = tokens[1];
-            if (fileRequested.startsWith("/app")) {
-                handleAppRequest(method, fileRequested, out);
-            } else {
-                handleFileRequest(method, fileRequested, out, dataOut);
-            }
+                String requestLine = in.readLine();
+                if (requestLine == null) {
+                    continue;
+                }
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                clientSocket.close();
-            } catch (IOException e) {
+                String[] tokens = requestLine.split(" ");
+                String method = tokens[0]; 
+                String fileRequested = tokens[1];
+
+                if (fileRequested.startsWith("/app")) {
+                    handleAppRequest(method, fileRequested, out);
+                } else {
+                    handleFileRequest(method, fileRequested, out, dataOut);
+                }
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private void handleFileRequest(String method, String fileRequested, PrintWriter out, BufferedOutputStream dataOut) throws IOException {
+    private static void handleFileRequest(String method, String fileRequested, PrintWriter out, BufferedOutputStream dataOut) throws IOException {
         if (method.equals("GET")) {
-            handleGetRequest(fileRequested, out, dataOut);
-        }
-    }
+            if (fileRequested.equals("/")) {
+                fileRequested = "/index.html";
+            }
 
-    private void handleGetRequest(String fileRequested, PrintWriter out, BufferedOutputStream dataOut) throws IOException {
-        if (fileRequested.equals("/")) {
-            fileRequested = "/index.html";
-        }
-        File file = new File(MicroServer.resourcesPath + fileRequested);
-        if (!file.exists()) {
-            out.println("HTTP/1.1 404 Not Found");
-            out.println("Content-Type: text/html");
+            File file = new File(staticFilePath + fileRequested);
+            if (!file.exists() || file.isDirectory()) {
+                out.println("HTTP/1.1 404 Not Found");
+                out.println("Content-Type: text/html");
+                out.println();
+                out.println("<html><body><h1>404 - Archivo no encontrado</h1></body></html>");
+                out.flush();
+                return;
+            }
+
+            int fileLength = (int) file.length();
+            String contentType = getContentType(fileRequested);
+            byte[] fileData = readFileData(file, fileLength);
+
+            out.println("HTTP/1.1 200 OK");
+            out.println("Content-Type: " + contentType);
+            out.println("Content-Length: " + fileLength);
             out.println();
             out.flush();
-            out.println("<html><body><h1>File Not Found</h1></body></html>");
-            out.flush();
-            return;
-        }
-        int fileLength = (int) file.length();
-        String content = getContentType(fileRequested);
-        byte[] fileData = readFileData(file, fileLength);
-        out.println("HTTP/1.1 200 OK");
-        out.println("Content-Type: " + content);
-        out.println("Content-Length: " + fileLength);
-        out.println();
-        out.flush();
-        dataOut.write(fileData, 0, fileLength);
-        dataOut.flush();
-    }
-    
 
-    private void handleAppRequest(String method, String fileRequested, PrintWriter out) {
+            dataOut.write(fileData, 0, fileLength);
+            dataOut.flush();
+        }
+    }
+
+    private static void handleAppRequest(String method, String fileRequested, PrintWriter out) {
         out.println("HTTP/1.1 200 OK");
-        out.println("Content-type: text/html");
+        out.println("Content-type: application/json");
         out.println();
 
         String[] pathAndQuery = fileRequested.substring(fileRequested.indexOf("/app/") + 4).split("\\?");
@@ -187,16 +173,16 @@ class ClientHandler implements Runnable {
                 out.println(response);
             } catch (Exception e) {
                 e.printStackTrace();
-                out.println("Error executing service method: " + e.getMessage());
+                out.println("Error ejecutando el servicio");
             }
         } else {
-            out.println("<html><body><h1>Service Not Found</h1></body></html>");
+            out.println("Servicio no encontrado");
         }
 
         out.flush();
     }
 
-    private Object[] getServiceMethodParameters(Method serviceMethod, Map<String, String> queryParams) {
+    private static Object[] getServiceMethodParameters(Method serviceMethod, Map<String, String> queryParams) {
         Object[] parameters = new Object[serviceMethod.getParameterCount()];
         Class<?>[] parameterTypes = serviceMethod.getParameterTypes();
         Annotation[][] annotations = serviceMethod.getParameterAnnotations();
@@ -213,15 +199,22 @@ class ClientHandler implements Runnable {
                     } else {
                         parameters[i] = convertToType(parameterTypes[i], paramValue);
                     }
-                } else {
-                    parameters[i] = null;
                 }
             }
         }
         return parameters;
     }
 
-    private Map<String, String> parseQueryParams(String query) {
+    private static Object convertToType(Class<?> type, String value) {
+        if (type == int.class || type == Integer.class) return Integer.parseInt(value);
+        if (type == double.class || type == Double.class) return Double.parseDouble(value);
+        if (type == float.class || type == Float.class) return Float.parseFloat(value);
+        if (type == long.class || type == Long.class) return Long.parseLong(value);
+        if (type == boolean.class || type == Boolean.class) return Boolean.parseBoolean(value);
+        return value; 
+    }
+
+    private static Map<String, String> parseQueryParams(String query) {
         Map<String, String> queryParams = new HashMap<>();
         if (query != null && !query.isEmpty()) {
             String[] pairs = query.split("&");
@@ -235,39 +228,16 @@ class ClientHandler implements Runnable {
         return queryParams;
     }
 
-    private Object convertToType(Class<?> type, String value) {
-        if (type == int.class || type == Integer.class) {
-            return Integer.parseInt(value);
-        } else if (type == double.class || type == Double.class) {
-            return Double.parseDouble(value);
-        } else if (type == float.class || type == Float.class) {
-            return Float.parseFloat(value);
-        } else if (type == long.class || type == Long.class) {
-            return Long.parseLong(value);
-        } else if (type == boolean.class || type == Boolean.class) {
-            return Boolean.parseBoolean(value);
-        } else {
-            return value;
-        }
-    }
-
-    static String getContentType(String filePath) {
-        if (filePath.endsWith(".html"))
-            return "text/html";
-        if (filePath.endsWith(".css"))
-            return "text/css";
-        if (filePath.endsWith(".js"))
-            return "application/javascript";
-        if (filePath.endsWith(".png"))
-            return "image/png";
-        if (filePath.endsWith(".jpg") || filePath.endsWith(".jpeg"))
-            return "image/jpeg";
-        if (filePath.endsWith(".gif"))
-            return "image/gif";
+    private static String getContentType(String filePath) {
+        if (filePath.endsWith(".html")) return "text/html";
+        if (filePath.endsWith(".css")) return "text/css";
+        if (filePath.endsWith(".js")) return "application/javascript";
+        if (filePath.endsWith(".png")) return "image/png";
+        if (filePath.endsWith(".jpg") || filePath.endsWith(".jpeg")) return "image/jpeg";
         return "text/plain";
     }
 
-    private byte[] readFileData(File file, int fileLength) throws IOException {
+    private static byte[] readFileData(File file, int fileLength) throws IOException {
         try (FileInputStream fileIn = new FileInputStream(file)) {
             byte[] fileData = new byte[fileLength];
             fileIn.read(fileData);
