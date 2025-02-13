@@ -260,15 +260,6 @@ The following unit tests were created to validate the functionality of the `Micr
 
 The **MicroSpring Server** project successfully demonstrates the implementation of a lightweight, annotation-based web framework built from scratch in Java. By leveraging Java reflection and custom annotations, the server dynamically registers and processes RESTful endpoints, similar to traditional frameworks like Spring Boot but without external dependencies.
 
-## Key Achievements
-
-- **Custom Annotations:** The project defines and utilizes `@RestController`, `@GetMapping`, and `@RequestParam` annotations to handle HTTP requests dynamically.
-- **Minimalistic Web Server:** The `MicroServer` component serves both static files (HTML, CSS, JavaScript) and API requests on port 8080.
-- **Modular Service Structure:** Controllers like `MathController` and `GreetingController` handle various API functionalities, ensuring clear separation of concerns.
-- **Unit Testing with JUnit:** The project includes comprehensive unit tests to validate endpoint responses, static file handling, and content type detection.
-- **Concurrency Support:** The server manages multiple simultaneous requests using a thread pool.
-
-
 
 ## Built With
 
